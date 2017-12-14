@@ -1,28 +1,48 @@
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
+var express = require('express'),
+app = express(),
+bodyParser = require('body-parser'),
+mongoose = require('mongoose');
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
+mongoose.connect("mongodb://localhost/yelp_camp", {useMongoClient: true});
+mongoose.Promise = global.Promise;
 
-var campgrounds = [
-  {name: 'Salmon Creek', image: 'https://pixabay.com/get/e136b80728f31c22d2524518a33219c8b66ae3d018b2104693f3c771/night-839807_640.jpg'},
-  {name: 'Granite Hill', image: 'https://pixabay.com/get/e837b50928f0043ed1584d05fb0938c9bd22ffd41cb0124092f6c279a7/trees-1246045_640.jpg'},
-  {name: 'Mountain Goat\'s Rest', image: 'https://pixabay.com/get/eb3db8072cf2023ed1584d05fb0938c9bd22ffd41cb0124092f6c579a7/indians-2898463_640.jpg'},
-  {name: 'Salmon Creek', image: 'https://pixabay.com/get/e136b80728f31c22d2524518a33219c8b66ae3d018b2104693f3c771/night-839807_640.jpg'},
-  {name: 'Granite Hill', image: 'https://pixabay.com/get/e837b50928f0043ed1584d05fb0938c9bd22ffd41cb0124092f6c279a7/trees-1246045_640.jpg'},
-  {name: 'Mountain Goat\'s Rest', image: 'https://pixabay.com/get/eb3db8072cf2023ed1584d05fb0938c9bd22ffd41cb0124092f6c579a7/indians-2898463_640.jpg'},
-  {name: 'Salmon Creek', image: 'https://pixabay.com/get/e136b80728f31c22d2524518a33219c8b66ae3d018b2104693f3c771/night-839807_640.jpg'},
-  {name: 'Granite Hill', image: 'https://pixabay.com/get/e837b50928f0043ed1584d05fb0938c9bd22ffd41cb0124092f6c279a7/trees-1246045_640.jpg'},
-  {name: 'Mountain Goat\'s Rest', image: 'https://pixabay.com/get/eb3db8072cf2023ed1584d05fb0938c9bd22ffd41cb0124092f6c579a7/indians-2898463_640.jpg'}
-];
+// SCHEMA SETUP
+
+var campgroundSchema = new mongoose.Schema({
+  name: String,
+  image: String
+});
+
+var Campground = mongoose.model('Campground', campgroundSchema);
+
+// DB Add Test
+// Campground.create({
+//   name: 'Mountain Goat\'s Rest',
+//   image: 'https://cdn.pixabay.com/photo/2017/10/28/23/18/indians-2898463_640.jpg'
+// }, function(error, camp){
+//   if (error) {
+//     console.log('There was an error.');
+//   } else {
+//     console.log('Campground successfully created:');
+//     console.log(camp);
+//   }
+// });
 
 app.get('/', function(req, res) {
   res.render('landing');
 });
 
 app.get('/campgrounds', function(req, res) {
-  res.render('campground', {campgrounds: campgrounds});
+  // Retrieve all campgrounds from DB
+  Campground.find({}, function(error, camps){
+    if (error) {
+      console.log('There was an error.');
+    } else {
+      res.render('campground', {campgrounds: camps});
+    }
+  });
 });
 
 app.post('/campgrounds', function(req, res) {
@@ -30,9 +50,15 @@ app.post('/campgrounds', function(req, res) {
   var name = req.body.name;
   var image = req.body.image;
   var newCampground = {name: name, image: image};
-  campgrounds.push(newCampground);
-  // redirect back to campgrounds page
-  res.redirect('/campgrounds');
+  // Create a new campground and save to DB
+  Campground.create(newCampground, function(error, newCamp){
+    if (error) {
+      console.log(error);
+    } else {
+      // redirect back to campgrounds page
+      res.redirect('/campgrounds');
+    }
+  });
 });
 
 app.get('/campgrounds/new', function(req, res) {
