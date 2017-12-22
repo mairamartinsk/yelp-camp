@@ -1,36 +1,15 @@
 var express = require('express'),
 app = express(),
 bodyParser = require('body-parser'),
-mongoose = require('mongoose');
+mongoose = require('mongoose'),
+Campground = require('./models/campground');
+
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 mongoose.connect("mongodb://localhost/yelp_camp", {useMongoClient: true});
 mongoose.Promise = global.Promise;
 
-// SCHEMA SETUP
-
-var campgroundSchema = new mongoose.Schema({
-  name: String,
-  image: String,
-  description: String
-});
-
-var Campground = mongoose.model('Campground', campgroundSchema);
-
-// DB Add Test
-// Campground.create({
-//   name: 'The Goat\'s Rest',
-//   image: 'https://cdn.pixabay.com/photo/2017/10/28/23/18/indians-2898463_640.jpg',
-//   description: 'The perfect refuge for goats. Sheep are also welcome.'
-// }, function(error, camp){
-//   if (error) {
-//     console.log('There was an error.');
-//   } else {
-//     console.log('Campground successfully created:');
-//     console.log(camp);
-//   }
-// });
 
 app.get('/', function(req, res) {
   res.render('landing');
