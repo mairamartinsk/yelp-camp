@@ -3,7 +3,7 @@ app = express(),
 bodyParser = require('body-parser'),
 mongoose = require('mongoose'),
 passport = require('passport'),
-LocalStrateg = require ('passport-local'),
+LocalStrategy = require ('passport-local'),
 Campground = require('./models/campground'),
 Comment = require('./models/comment'),
 User = require('./models/user'),
@@ -16,6 +16,19 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + '/public'));
 seedDB();
+
+
+// PASSPORT SETUP
+app.use(require('express-session')({
+  secret: 'Astro is the most beautiful dog on Earth',
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 
 app.get('/', function(req, res) {
@@ -110,6 +123,26 @@ app.post('/campgrounds/:id/comments', function(req, res){
     }
   });
   // Redirect to campground showpage
+});
+
+
+// AUTH ROUTES
+
+app.get('/register', function(req, res){
+  res.render('register');
+});
+
+app.post('/register', function(req, res){
+  var newUser = new User({username: req.body.username});
+  User.register(newUser, req.body.password, function(err, user){
+    if (err) {
+      console.log(err);
+      return res.render('register');
+    }
+    passport.authenticate('local')(req, res, function(){
+      res.redirect('/campgrounds');
+    });
+  });
 });
 
 
