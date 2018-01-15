@@ -16,12 +16,12 @@ router.get('/', function(req, res) {
 });
 
 // Campground New Route (show form to create new camp)
-router.get('/new', (req, res) => {
+router.get('/new', isLoggedIn, (req, res) => {
     res.render('campgrounds/new');
 });
 
 // Campground Create Route (add new camp to DB)
-router.post('/', function(req, res) {
+router.post('/', isLoggedIn, function(req, res) {
     const name = req.body.name;
     const image = req.body.image;
     const desc = req.body.description;
@@ -50,5 +50,13 @@ router.get('/:id', function(req, res) {
             }
         });
 });
+
+// Middleware
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/login');
+}
 
 module.exports = router;
