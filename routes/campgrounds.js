@@ -81,7 +81,16 @@ router.put('/:id', function(req, res) {
     });
 });
 
-// TODO: Campground Destroy Route (delete then redirect) DELETE
+// Campground Destroy Route (delete then redirect)
+router.delete('/:id', function(req, res) {
+    Campground.findByIdAndRemove(req.params.id, function(err, deleteCamp) {
+        if (err) {
+            res.redirect('/campgrounds');
+        } else {
+            res.redirect('/campgrounds');
+        }
+    });
+});
 
 // Middleware
 function isLoggedIn(req, res, next) {
