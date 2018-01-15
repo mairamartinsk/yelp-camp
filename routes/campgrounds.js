@@ -25,10 +25,15 @@ router.post('/', isLoggedIn, function(req, res) {
     const name = req.body.name;
     const image = req.body.image;
     const desc = req.body.description;
+    const author = {
+        id: req.user._id,
+        username: req.user.username
+    };
     const newCampground = {
         name: name,
         image: image,
-        description: desc
+        description: desc,
+        author: author
     };
     Campground.create(newCampground, (error, newCamp) => {
         error ? console.log(error) : res.redirect('/campgrounds');
