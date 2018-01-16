@@ -53,21 +53,29 @@ router.get('/:comment_id/edit', function(req, res) {
     });
 });
 
-// Comments Update Route
-router.put('/:comment_id/', function(req, res) {
+// Comments Update Route (update comment on db and redirect)
+router.put('/:comment_id', function(req, res) {
     Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(
         err,
         updatedComment
     ) {
-        if (err) {
-            res.redirect('back');
-        } else {
-            res.redirect('/campgrounds/' + req.params.id);
-        }
+        err
+            ? res.redirect('back')
+            : res.redirect('/campgrounds/' + req.params.id);
     });
 });
 
-// TODO: Comments Destroy Route
+// Comments Destroy Route (delete comment and redirect)
+router.delete('/:comment_id', function(req, res) {
+    Comment.findByIdAndRemove(req.params.comment_id, function(
+        err,
+        deleteComment
+    ) {
+        err
+            ? res.redirect('back')
+            : res.redirect('/campgrounds/' + req.params.id);
+    });
+});
 
 // Middleware
 function isLoggedIn(req, res, next) {
