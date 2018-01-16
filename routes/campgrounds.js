@@ -69,11 +69,9 @@ router.put('/:id', hasOwnership, function(req, res) {
         err,
         updateCamp
     ) {
-        if (err) {
-            res.redirect('/campgrounds');
-        } else {
-            res.redirect('/campgrounds/' + req.params.id);
-        }
+        err
+            ? res.redirect('/campgrounds')
+            : res.redirect('/campgrounds/' + req.params.id);
     });
 });
 
