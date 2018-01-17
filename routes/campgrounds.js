@@ -37,7 +37,12 @@ router.post('/', middleware.isLoggedIn, function(req, res) {
         author: author
     };
     Campground.create(newCampground, (error, newCamp) => {
-        error ? console.log(error) : res.redirect('/campgrounds');
+        if (error) {
+            console.log(error);
+        } else {
+            req.flash('success', 'Campground successfully created!');
+            res.redirect('/campgrounds');
+        }
     });
 });
 
@@ -70,16 +75,26 @@ router.put('/:id', middleware.hasOwnership, function(req, res) {
         err,
         updateCamp
     ) {
-        err
-            ? res.redirect('/campgrounds')
-            : res.redirect('/campgrounds/' + req.params.id);
+        if (err) {
+            req.flash('error', 'Something went wrong. Please try again!');
+            res.redirect('/campgrounds');
+        } else {
+            req.flash('success', 'Campground successfully updated!');
+            res.redirect('/campgrounds/' + req.params.id);
+        }
     });
 });
 
 // Campground Destroy Route (delete then redirect)
 router.delete('/:id', middleware.hasOwnership, function(req, res) {
     Campground.findByIdAndRemove(req.params.id, (err, deleteCamp) => {
-        err ? res.redirect('/campgrounds') : res.redirect('/campgrounds');
+        if (err) {
+            req.flash('error', 'Something went wrong.');
+            res.redirect('/campgrounds');
+        } else {
+            req.flash('success', 'Campground successfully deleted.');
+            res.redirect('/campgrounds');
+        }
     });
 });
 
