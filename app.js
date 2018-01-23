@@ -14,7 +14,10 @@ const commentRoutes = require('./routes/comments');
 const campgroundRoutes = require('./routes/campgrounds');
 const indexRoutes = require('./routes/index');
 
-mongoose.connect('mongodb://localhost/yelp_camp', { useMongoClient: true });
+// mongoose.connect('mongodb://localhost/yelp_camp', { useMongoClient: true });
+mongoose.connect('mongodb://maira:astro@ds213118.mlab.com:13118/yelp', {
+    useMongoClient: true
+});
 mongoose.Promise = global.Promise;
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
