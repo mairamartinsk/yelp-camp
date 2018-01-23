@@ -24,6 +24,7 @@ router.get('/new', middleware.isLoggedIn, (req, res) => {
 // Campground Create Route (add new camp to DB)
 router.post('/', middleware.isLoggedIn, function(req, res) {
     const name = req.body.name;
+    const price = req.body.price;
     const image = req.body.image;
     const desc = req.body.description;
     const author = {
@@ -32,6 +33,7 @@ router.post('/', middleware.isLoggedIn, function(req, res) {
     };
     const newCampground = {
         name: name,
+        price: price,
         image: image,
         description: desc,
         author: author
