@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
 
 // Register Route (show signup form)
 router.get('/register', (req, res) => {
-    res.render('register');
+    res.render('register', { page: 'register' });
 });
 
 // Handles signup logic (add new User to DB) and authentication
@@ -36,7 +36,7 @@ router.post('/register', function(req, res) {
 
 // Login Route
 router.get('/login', (req, res) => {
-    res.render('login');
+    res.render('login', { page: 'login' });
 });
 
 // Handles login logic and authentication
